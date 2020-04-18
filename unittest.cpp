@@ -1,9 +1,15 @@
 #include "util.h"
 
 #include "gtest/gtest.h"
+#include <iomanip>
 #include <sstream>
+#include <fstream>
+#include <stdexcept>
+#include <limits>
+#include <cmath>
 
 using namespace std;
+using namespace util;
 
 TEST(promptUserTest, inputTest)
 {
@@ -29,3 +35,44 @@ TEST(promptUserTest, inputTest)
   answer = promptUser("continue?", "QUIT");
   EXPECT_EQ(answer, "quit");
 }
+
+TEST(FunctionTest, lowerCaseTest)
+{
+  string upper = "THE BROWN FOX JUMPS OVER THE LAZY DOG";
+  string lower = "the brown fox jumps over the lazy dog";
+  lowerCase(upper);
+  EXPECT_EQ(upper, lower);
+}
+
+TEST(FunctionTest, reportErrorTest)
+{
+  EXPECT_THROW(reportError("error"), std::invalid_argument);
+}
+
+TEST(FunctionTest, removeTrailNewLineTest)
+{
+  string str = "hello\n";
+  removeTrailNewLine(str);
+  EXPECT_NE(str, "hello");
+}
+
+TEST(FunctionTest, obscureAsciiFileTest)
+{
+  // create test file from string
+  string str = "line1 1.2345\nline2 2.3456\nline3 3.1415\n";
+  ofstream("input", ios_base::binary)  << str;
+
+  obscureAsciiFile("input", "output");
+  obscureAsciiFile("output", "inputrestore");
+
+  // read file to string
+  ifstream fs("inputrestore", ios_base::binary | ios_base::ate);
+  auto size = fs.tellg();
+  string restore(size, '\0');
+  fs.seekg(0);
+  fs.read(&restore[0], size);
+  fs.close();
+  system("rm -f input output inputrestore");
+  EXPECT_EQ(str, restore);
+}
+

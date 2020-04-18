@@ -2,8 +2,14 @@
 
 #include <boost/foreach.hpp>
 #include <cctype>
+#include <fstream>
 #include <iostream>
+#include <list>
+#include <sstream>
+#include <stdexcept>
 #include <string>
+
+namespace util {
 
 using namespace std;
 
@@ -62,7 +68,63 @@ std::string promptUser(const std::string& message, std::string answer1,
 
 void lowerCase(string& str)
 {
-  for (string::iterator it = str.begin(); it != str.end(); ++it) {
+  for (auto it = str.begin(); it != str.end(); ++it) {
     *it = tolower(*it);
   }
 }
+
+void obscureString(string& str)
+{
+  for (auto it = str.begin(); it != str.end(); ++it) {
+    *it = ~*it;
+  }
+}
+
+void reportError(string msg)
+{
+  msg += "\n";
+  throw invalid_argument(msg);
+}
+
+void checkFileExist(const string& file)
+{
+  ifstream fi(file);
+  if (!fi) {
+    reportError("fail to open file: " + file);
+  }
+}
+
+void removeTrailNewLine(string& str)
+{
+  int len = str.size();
+  if (len and str[len - 1] == '\n') {
+    str.append("\n");
+  }
+}
+
+void obscureAsciiFile(string in, string out)
+{
+  checkFileExist(in);
+
+  ifstream fi(in);
+  if (!fi) {
+    reportError("fail to open file: " + in);
+  }
+
+  ofstream fo(out);
+  if (!fo) {
+    reportError("fail to open file: " + out);
+  }
+
+  string str;
+  while (getline(fi, str)) {
+    removeTrailNewLine(str);
+    obscureString(str);
+    fo << str << endl;
+  }
+}
+
+void convertAsciiToBin(string in, string out) { obscureAsciiFile(in, out); }
+
+void convertBinToAscii(string in, string out) { obscureAsciiFile(in, out); }
+}  // namespace util
