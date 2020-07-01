@@ -31,4 +31,7 @@ void convertAsciiToBin(std::string in, std::string out);
 
 void convertBinToAscii(std::string in, std::string out);
 
+std::string promptUser(const std::string& message,
+                       std::initializer_list<std::string> list);
+
 }  // namespace util

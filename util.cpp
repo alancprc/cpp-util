@@ -1,6 +1,7 @@
 #include "util.h"
 
 #include <boost/foreach.hpp>
+#include <boost/algorithm/string/join.hpp>
 #include <cctype>
 #include <fstream>
 #include <iostream>
@@ -8,6 +9,8 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <vector>
+#include <algorithm>
 
 namespace util {
 
@@ -127,4 +130,26 @@ void obscureAsciiFile(string in, string out)
 void convertAsciiToBin(string in, string out) { obscureAsciiFile(in, out); }
 
 void convertBinToAscii(string in, string out) { obscureAsciiFile(in, out); }
+
+string promptUser(const string& message, initializer_list<string> list)
+{
+  vector<string> options;
+  for (auto it = list.begin(); it != list.end(); ++it) {
+    string s = *it;
+    lowerCase(s);
+    options.push_back(s);
+  }
+
+  string promptMsg = message + " [" + boost::join(options, "/") + "]";
+
+  string input;
+  while (find(options.begin(), options.end(), input) == options.end()) {
+    cout << promptMsg << endl;
+    getline(cin, input);
+    lowerCase(input);
+  }
+  lowerCase(input);
+  return string(input.c_str());
+}
+
 }  // namespace util
