@@ -60,7 +60,8 @@ TEST(FunctionTest, obscureAsciiFileTest)
 {
   // create test file from string
   string str = "line1 1.2345\nline2 2.3456\nline3 3.1415\n";
-  ofstream("input", ios_base::binary)  << str;
+  ofstream os("input", ios_base::binary);
+  os << str;
 
   obscureAsciiFile("input", "output");
   obscureAsciiFile("output", "inputrestore");
