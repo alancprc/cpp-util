@@ -1,6 +1,6 @@
 TARGET = unittest
-HEADER = util.h 
-SOURCE = unittest.cpp util.cpp
+HEADER = ../cpp-util.h
+SOURCE = unittest.cpp ../cpp-util.cpp
 CXXFLAG = -std=c++0x
 CXXFLAG += -DGTEST_LANG_CXX11=0
 LINKFLAG = -l gmock_main -l gmock -l gtest
